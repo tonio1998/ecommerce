@@ -29,17 +29,9 @@ import NetInfo from "@react-native-community/netinfo";
 import SigninForm from "./src/Shared/Auth/SigninForm.tsx";
 import LoginOptionsScreen from "./src/Shared/Auth/LoginOptionsScreen.tsx";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
-import UserProfileScreen from "./src/Shared/User/UserProfileScreen.tsx";
-import TrackingBottomTabNav from "./src/navigation/TrackingBottomTabNav.tsx";
-import AddRecordScreen from "./src/screens/Records/AddRecordScreen.tsx";
-import ScannerValidator from './src/screens/Scanner/ScannerValidator.tsx';
 import {GestureHandlerRootView} from "react-native-gesture-handler";
-import AcademicYearScreen from "./src/Shared/AcademicYearScreen.tsx";
 import {FiscalYearProvider} from "./src/context/FiscalYearContext.tsx";
 import {useAccess} from "./src/hooks/useAccess.ts";
-import AnauthorizedScreen from "./src/Shared/Anauthorized.tsx";
-import UsersDetails from "./src/screens/user/UsersDetails.tsx";
-import ChatRoom from "./src/screens/Chat/ChatRoom.tsx";
 const Stack = createNativeStackNavigator();
 LogBox.ignoreLogs(['Text strings must be rendered within a <Text> component']);
 

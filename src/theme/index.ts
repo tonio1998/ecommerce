@@ -53,11 +53,12 @@ const colors = {
         inputBackground: '#FFFFFF',
 
         // --- Brand Colors (Darker Green based on Logo) ---
-        primary: '#228B22',
-        primary_dark: '#0a3300',
-        primary_light: '#ade254',
-        button: '#005431',
-        secondary: '#f29c00',
+        primary: '#0F3A65',        // BuildMart navy blue
+        primary_dark: '#0B2C4D',   // darker navy for headers/status bars
+        primary_light: '#3E6F9E',  // lighter blue for highlights
+        button: '#E87536',         // BuildMart orange (CTAs)
+        secondary: '#E87536',      // same orange for consistency
+
 
         // PURPLE
         // primary: '#7c40ff',

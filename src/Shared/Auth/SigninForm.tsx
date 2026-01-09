@@ -5,10 +5,10 @@ import {
 	StyleSheet,
 	TouchableOpacity,
 	KeyboardAvoidingView,
-	SafeAreaView,
 	Platform,
 	Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Keychain from 'react-native-keychain';
@@ -25,6 +25,7 @@ import checkBiometricSupport from '../../services/checkBiometricSupport';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { GOOGLE_CLIENT_ID } from '../../../env';
 import { handleApiError } from '../../utils/errorHandler';
+import { isTablet } from '../../utils/responsive';
 
 GoogleSignin.configure({
 	webClientId: GOOGLE_CLIENT_ID,
@@ -113,66 +114,65 @@ const SigninForm = ({ navigation }: any) => {
 	return (
 		<SafeAreaView style={styles.container}>
 			<KeyboardAvoidingView
-				style={{ flex: 1 }}
+				style={styles.flex}
 				behavior={Platform.OS === 'ios' ? 'padding' : undefined}
 			>
 				<BackHeader />
 
-				<View style={styles.wrapper}>
-					<View style={styles.card}>
-						<CText style={styles.title}>Welcome Back</CText>
-						<CText style={styles.subtitle}>Sign in to continue</CText>
+				<View style={styles.body}>
+					<CText fontSize={26} fontStyle="SB">
+						Welcome back
+					</CText>
+					<CText fontSize={13} style={styles.subtitle}>
+						Sign in with your email and password
+					</CText>
 
-						<View style={styles.inputGroup}>
-							<TextInput
-								placeholder="Email"
-								placeholderTextColor="#9CA3AF"
-								value={email}
-								onChangeText={setEmail}
-								style={styles.input}
-								keyboardType="email-address"
-								autoCapitalize="none"
-							/>
+					<View style={styles.form}>
+						<TextInput
+							placeholder="Email address"
+							placeholderTextColor="#9CA3AF"
+							value={email}
+							onChangeText={setEmail}
+							style={styles.input}
+							keyboardType="email-address"
+							autoCapitalize="none"
+						/>
 
-							<TextInput
-								placeholder="Password"
-								placeholderTextColor="#9CA3AF"
-								value={password}
-								onChangeText={setPassword}
-								secureTextEntry
-								style={styles.input}
-							/>
-						</View>
-
-						<TouchableOpacity style={styles.primaryButton} onPress={handleLogin}>
-							<CText style={styles.primaryText}>Sign In</CText>
-						</TouchableOpacity>
-
-						<View style={styles.dividerRow}>
-							<View style={styles.line} />
-							<CText style={styles.orText}>OR</CText>
-							<View style={styles.line} />
-						</View>
-
-						<View style={styles.altActions}>
-							<TouchableOpacity onPress={handleGoogleLogin} style={styles.iconBtn}>
-								<Icon name="logo-google" size={22} color="#DB4437" />
-							</TouchableOpacity>
-
-							{isBiometricEnabled && (
-								<TouchableOpacity
-									onPress={handleBiometricLogin}
-									style={styles.iconBtn}
-								>
-									<Icon
-										name="finger-print"
-										size={26}
-										color={theme.colors.light.primary}
-									/>
-								</TouchableOpacity>
-							)}
-						</View>
+						<TextInput
+							placeholder="Password"
+							placeholderTextColor="#9CA3AF"
+							value={password}
+							onChangeText={setPassword}
+							secureTextEntry
+							style={styles.input}
+						/>
 					</View>
+
+					<TouchableOpacity style={styles.primaryBtn} onPress={handleLogin}>
+						<CText style={styles.primaryText}>Sign in</CText>
+					</TouchableOpacity>
+
+					<TouchableOpacity
+						style={styles.linkBtn}
+						onPress={handleGoogleLogin}
+					>
+						<Icon name="logo-google" size={18} color="#DB4437" />
+						<CText style={styles.linkText}>Continue with Google</CText>
+					</TouchableOpacity>
+
+					{isBiometricEnabled && (
+						<TouchableOpacity
+							style={styles.biometric}
+							onPress={handleBiometricLogin}
+						>
+							<Icon
+								name="finger-print-outline"
+								size={26}
+								color={theme.colors.light.primary}
+							/>
+							<CText style={styles.biometricText}>Use biometrics</CText>
+						</TouchableOpacity>
+					)}
 				</View>
 			</KeyboardAvoidingView>
 		</SafeAreaView>
@@ -180,92 +180,69 @@ const SigninForm = ({ navigation }: any) => {
 };
 
 const styles = StyleSheet.create({
+	flex: {
+		flex: 1,
+	},
 	container: {
 		flex: 1,
-		backgroundColor: '#FFFFFF',
+		backgroundColor: '#fff',
+		paddingHorizontal: 24,
 	},
-	wrapper: {
-		flex: 1,
-		justifyContent: 'center',
-		paddingHorizontal: 20,
-	},
-	card: {
-		backgroundColor: '#FFFFFF',
-		borderRadius: 24,
-		padding: 24,
-		shadowColor: '#000',
-		shadowOpacity: 0.05,
-		shadowRadius: 24,
-		shadowOffset: { width: 0, height: 8 },
-		// elevation: 6,
-	},
-	title: {
-		fontSize: 30,
-		fontWeight: '800',
-		color: '#111827',
-		textAlign: 'center',
+	body: {
+		marginTop: 150,
+		width: isTablet() ? '60%' : '100%',
+		alignSelf: 'center',
 	},
 	subtitle: {
-		fontSize: 14,
-		color: '#6B7280',
-		textAlign: 'center',
 		marginTop: 6,
-		marginBottom: 28,
+		marginBottom: 32,
+		color: '#6B7280',
 	},
-	inputGroup: {
+	form: {
 		gap: 14,
 	},
 	input: {
-		height: 54,
-		borderRadius: 16,
-		backgroundColor: '#F3F4F6',
-		paddingHorizontal: 18,
+		height: 52,
+		borderWidth: 1,
+		borderColor: '#E5E7EB',
+		borderRadius: 8,
+		paddingHorizontal: 14,
 		fontSize: 15,
 		color: '#111827',
 	},
-	primaryButton: {
+	primaryBtn: {
 		marginTop: 24,
-		height: 54,
-		borderRadius: 16,
+		height: 52,
+		borderRadius: 8,
 		backgroundColor: theme.colors.light.primary,
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
 	primaryText: {
-		color: '#FFFFFF',
-		fontSize: 16,
-		fontWeight: '700',
-	},
-	dividerRow: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		marginVertical: 24,
-	},
-	line: {
-		flex: 1,
-		height: 1,
-		backgroundColor: '#E5E7EB',
-	},
-	orText: {
-		marginHorizontal: 12,
-		color: '#9CA3AF',
-		fontSize: 12,
+		color: '#fff',
+		fontSize: 15,
 		fontWeight: '600',
 	},
-	altActions: {
+	linkBtn: {
+		marginTop: 18,
 		flexDirection: 'row',
-		justifyContent: 'center',
-		gap: 20,
-	},
-	iconBtn: {
-		width: 54,
-		height: 54,
-		borderRadius: 27,
-		backgroundColor: '#FFFFFF',
-		borderWidth: 1,
-		borderColor: '#E5E7EB',
-		justifyContent: 'center',
 		alignItems: 'center',
+		justifyContent: 'center',
+		gap: 8,
+	},
+	linkText: {
+		fontSize: 14,
+		color: '#111827',
+		fontWeight: '500',
+	},
+	biometric: {
+		marginTop: 30,
+		alignItems: 'center',
+	},
+	biometricText: {
+		marginTop: 6,
+		fontSize: 13,
+		color: '#4B5563',
 	},
 });
 
