@@ -345,7 +345,7 @@ export const globalStyles = StyleSheet.create({
         // position: 'relative',
         // marginTop: 90,
         // backgroundColor: theme.colors.light.background,
-        paddingTop: 100,
+        paddingTop: 90,
     },
     picker: {
         height: 50,

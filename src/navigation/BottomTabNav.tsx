@@ -52,8 +52,11 @@ export default function BottomTabNav() {
 				return focused ? 'qr-code' : 'qr-code-outline';
 			case 'Add':
 				return focused ? 'add-circle' : 'add-circle-outline';
-			case 'Employee':
-				return focused ? 'people' : 'people-outline';
+			case 'Me':
+				return focused ? 'person' : 'person-outline';
+			case 'Shop':
+				return focused ? 'cart' : 'cart-outline';
+
 			case 'Chat':
 				return focused ? 'chatbubble-ellipses' : 'chatbubble-ellipses-outline';
 			default:
@@ -98,7 +101,8 @@ export default function BottomTabNav() {
 				},
 			})}
 		>
-			<Tab.Screen name="Home" component={HomeScreen} />
+			<Tab.Screen name="Shop" component={HomeScreen} />
+			<Tab.Screen name="Me" component={HomeScreen} />
 		</Tab.Navigator>
 	);
 }

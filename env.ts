@@ -13,12 +13,13 @@ export const FILE_BASE_URL = API_BASE+'/storage/app';
 // export const FILE_BASE_URL = API+'/storage';
 
 export const ENABLE_DEBUG = true;
-export const GOOGLE_CLIENT_ID = "51010046813-qes3dggin3pa5nhmdali9t8agvos4cmb.apps.googleusercontent.com";
+export const GOOGLE_CLIENT_ID = "75170860680-iugg9obg1c32e3btmqo800h1med0oqvq.apps.googleusercontent.com";
+export const PROJECT_ID = "project-75170860680";
 export const SCHOOL_NAME = "SURIGAO DEL NORTE STATE UNIVERSITY";
 export const SEMAPHORE_API_KEY="2db497e7dca562167ae58275bc4bf2c0"
 export const SEMAPHORE_API_SENDER_NAME="DJEMC"
-export const APP_NAME = "fbTrack";
-export const TAGLINE = "Records Tracking System"
+export const APP_NAME = "BuildMart";
+export const TAGLINE = "Everything you need to Build";
 export const PAGE_ID = "100498592411671";
 export const APP_ID = "RTS";
 export const CACHE_REFRESH = 1000

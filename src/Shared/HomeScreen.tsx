@@ -1,425 +1,225 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {
 	View,
 	StyleSheet,
 	SafeAreaView,
-	RefreshControl,
 	TouchableOpacity,
 	TextInput,
 	FlatList,
-	ScrollView,
-	Animated,
-	Easing,
+	ScrollView, Image,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import LinearGradient from 'react-native-linear-gradient';
-import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';
 
 import { globalStyles } from '../theme/styles';
 import { CText } from '../components/common/CText';
 import { theme } from '../theme';
 import CustomHomeHeader from '../components/layout/CustomHomeHeader';
-import { useAuth } from '../context/AuthContext';
-import { NetworkContext } from '../context/NetworkContext';
-import { formatDate } from '../utils/dateFormatter';
-import { formatNumber, getDisplayName } from '../utils/format';
-import { getGreeting } from '../utils/greetings';
-import { useFiscalYear } from '../context/FiscalYearContext';
-import { getDashData, searchRecords } from '../api/modules/logsApi';
-import { handleApiError } from '../utils/errorHandler';
-import {
-	loadDashboardFromCache,
-	saveDashboardToCache,
-} from '../services/cache/dashboardCache';
-import { LastUpdatedBadge } from '../components/common/LastUpdatedBadge';
-import { useAccess } from '../hooks/useAccess';
-import UnauthorizedView from '../components/UnauthorizedView';
+import { formatNumber } from '../utils/format';
 
-const HomeScreen = ({ navigation }) => {
-	const { user } = useAuth();
-	const { hasRole } = useAccess();
-	const network = useContext(NetworkContext);
-	const { fiscalYear } = useFiscalYear();
 
-	const [dashboardData, setDashboardData] = useState<any>({});
-	const [loading, setLoading] = useState(true);
-	const [refreshing, setRefreshing] = useState(false);
-	const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+const CATEGORIES = [
+	'All',
+	'Electronics',
+	'Fashion',
+	'Home',
+	'Food',
+	'Beauty',
+];
 
-	const [query, setQuery] = useState('');
-	const [results, setResults] = useState<any[]>([]);
-	const [searching, setSearching] = useState(false);
+const PRODUCTS = [
+	{
+		id: 1,
+		name: 'Portland Cement (40kg)',
+		price: 275,
+		category: 'Construction Materials',
+		stock: 120,
+		image: 'https://gratisongkir-storage.com/products/900x900/uKdcDZ0jJJQB.jpg',
+	},
+	{
+		id: 2,
+		name: 'Deformed Steel Bar (10mm)',
+		price: 420,
+		category: 'Steel & Metal',
+		stock: 80,
+		image: 'https://image.made-in-china.com/2f0j00fUhkFHSKnWqP/Latest-HRB400-Grade-Dia-10mm-Steel-Rebar-Deformed-Steel-Bar-Iron-Rods-with-Rib-Fe-500-Steel-Rebar.jpg',
+	},
+	{
+		id: 3,
+		name: 'Concrete Hollow Blocks (CHB)',
+		price: 18,
+		category: 'Construction Materials',
+		stock: 1500,
+		image: 'https://th.bing.com/th/id/R.78ad31b9cb6be0ee9602c354a7505917?rik=kFi2viGTE3h5tQ&riu=http%3a%2f%2fbhcldavaoconstruction.weebly.com%2fuploads%2f3%2f9%2f5%2f5%2f39551939%2fs716957615216130486_p2_i7_w640.jpeg&ehk=jwaFVv4drfgdE5wR4H%2fuOR5ic47YmmPqAhGMM1ZzLbA%3d&risl=&pid=ImgRaw&r=0',
+	},
+	{
+		id: 4,
+		name: 'Angle Grinder (4")',
+		price: 2499,
+		category: 'Power Tools',
+		stock: 15,
+		image: 'https://c.shld.net/rpx/i/s/i/spin/image/spin_prod_248872001??hei=64&wid=64&qlt=50',
+	},
+	{
+		id: 5,
+		name: 'Electric Drill Machine',
+		price: 3199,
+		category: 'Power Tools',
+		stock: 12,
+		image: 'https://m.media-amazon.com/images/I/81KCtYjRKdS._SL1500_.jpg',
+	},
+	{
+		id: 6,
+		name: 'PVC Pipe (2-inch, 3m)',
+		price: 180,
+		category: 'Plumbing',
+		stock: 200,
+		image: 'https://5.imimg.com/data5/SELLER/Default/2024/12/475799473/ZZ/GF/LL/58169238/casing-pipes-1000x1000.webp',
+	},
+	{
+		id: 7,
+		name: 'Construction Safety Helmet',
+		price: 350,
+		category: 'Safety Gear',
+		stock: 45,
+		image: 'https://agrarzone.com/media/36/7d/e6/1700636370/schutzhelm-gelb-main-jpg_689e268d2984c9c2.jpg',
+	},
+	{
+		id: 8,
+		name: 'Paint Roller Set',
+		price: 299,
+		category: 'Finishing',
+		stock: 60,
+		image: 'https://m.media-amazon.com/images/I/61FpKnqcuWL._AC_SL1500_.jpg',
+	},
+];
 
-	const searchAnim = useRef(new Animated.Value(0)).current;
-	const isSearchMode = query.trim().length > 0;
 
-	useEffect(() => {
-		Animated.timing(searchAnim, {
-			toValue: isSearchMode ? 1 : 0,
-			duration: 250,
-			easing: Easing.out(Easing.cubic),
-			useNativeDriver: true,
-		}).start();
-	}, [isSearchMode]);
 
-	const loadDashboard = async (force = false) => {
-		if (!user?.id) return;
+/* ===================== SCREEN ===================== */
 
-		try {
-			setLoading(true);
+const HomeScreen = () => {
+	const [query, setQuery] = useState<string>('');        // SAFE string
+	const [activeCategory, setActiveCategory] = useState<string>('All');
 
-			if (!force) {
-				const { data, date } = await loadDashboardFromCache(
-					user.id,
-					fiscalYear
-				);
-				if (data) {
-					setDashboardData(data);
-					setLastUpdated(date);
-					return;
-				}
-			}
+	// normalize search text (prevents toLowerCase crash)
+	const safeQuery = (query ?? '').toString().toLowerCase();
 
-			const fresh = await getDashData({ fiscalYear });
-			setDashboardData(fresh);
+	const filteredProducts = PRODUCTS.filter(item => {
+		const matchCategory =
+			activeCategory === 'All' || item.category === activeCategory;
 
-			const savedAt = await saveDashboardToCache(
-				user.id,
-				fiscalYear,
-				fresh
-			);
+		const matchQuery =
+			(item.name ?? '').toLowerCase().includes(safeQuery);
 
-			setLastUpdated(savedAt);
-
-			console.log("fresh: ", fresh)
-		} catch (err) {
-			handleApiError(err);
-		} finally {
-			setLoading(false);
-			setRefreshing(false);
-		}
-	};
-
-	useEffect(() => {
-		loadDashboard();
-	}, [fiscalYear]);
-
-	const onRefresh = () => {
-		setRefreshing(true);
-		loadDashboard(true);
-	};
-
-	const executeSearch = async () => {
-		if (!query.trim()) {
-			setResults([]);
-			return;
-		}
-
-		try {
-			setSearching(true);
-			const res = await searchRecords(query);
-			setResults(res?.data ?? []);
-		} catch (err) {
-			handleApiError(err);
-		} finally {
-			setSearching(false);
-		}
-	};
-
-	const handleSearchSubmit = () => {
-		executeSearch();
-	};
-
-	if (hasRole('STUD')) {
-		return <UnauthorizedView />;
-	}
+		return matchCategory && matchQuery;
+	});
 
 	return (
 		<>
 			<CustomHomeHeader />
+
 			<SafeAreaView style={globalStyles.safeArea}>
-				<View style={{ flex: 1 }}>
-					<View style={globalStyles.p_3}>
-						<CText fontSize={22} fontStyle="B">
-							{getGreeting()}, {getDisplayName(user?.name)}!
-						</CText>
-
-						<LastUpdatedBadge
-							date={lastUpdated}
-							onReload={onRefresh}
+				<View style={globalStyles.p_2}>
+					<View style={styles.searchBox}>
+						<Icon name="search-outline" size={18} color="#999" />
+						<TextInput
+							placeholder="Search products…"
+							value={query}
+							onChangeText={text => setQuery(text ?? '')}
+							style={styles.searchInput}
+							placeholderTextColor={'#999'}
 						/>
-
-						<View style={styles.searchBox}>
-							<Icon name="search-outline" size={18} color="#999" />
-
-							<TextInput
-								placeholder="Search records, QR code, sender…"
-								value={query}
-								onChangeText={setQuery}
-								onSubmitEditing={handleSearchSubmit}
-								returnKeyType="search"
-								style={styles.searchInput}
-								placeholderTextColor="#999"
-							/>
-
-							{query.length > 0 && (
-								<TouchableOpacity
-									onPress={() => {
-										setQuery('');
-										setResults([]);
-									}}
-								>
-									<Icon
-										name="close-circle"
-										size={18}
-										color="#bbb"
-									/>
-								</TouchableOpacity>
-							)}
-						</View>
-					</View>
-
-					{isSearchMode && (
-						<Animated.View
-							style={[
-								styles.searchOverlay,
-								{
-									opacity: searchAnim,
-									transform: [
-										{
-											translateY:
-												searchAnim.interpolate({
-													inputRange: [0, 1],
-													outputRange: [40, 0],
-												}),
-										},
-									],
-								},
-							]}
-						>
-							<View style={styles.searchHandle} />
-
-							{searching ? (
-								<View style={styles.searchLoading}>
-									<ShimmerPlaceHolder
-										style={{
-											height: 60,
-											borderRadius: 12,
-										}}
-									/>
-								</View>
-							) : (
-								<FlatList
-									data={results}
-									keyExtractor={i =>
-										i.id.toString()
-									}
-									renderItem={({ item }) => (
-										<TouchableOpacity
-											style={styles.searchRow}
-											onPress={() =>
-												navigation.navigate(
-													'ScanQRDetails',
-													{
-														qr_code:
-														item.QRCODE,
-													}
-												)
-											}
-										>
-											<View
-												style={
-													styles.searchIconWrap
-												}
-											>
-												<Icon
-													name="document-text-outline"
-													size={18}
-													color={
-														theme.colors
-															.light.primary
-													}
-												/>
-											</View>
-
-											<View style={{ flex: 1 }}>
-												<CText fontStyle="B">
-													{item.Description}
-												</CText>
-												<CText
-													style={styles.meta}
-												>
-													{item.QRCODE}
-												</CText>
-											</View>
-										</TouchableOpacity>
-									)}
-									ListEmptyComponent={
-										<View
-											style={styles.emptySearch}
-										>
-											<CText>
-												No results found
-											</CText>
-										</View>
-									}
-								/>
-							)}
-						</Animated.View>
-					)}
-
-					<ScrollView
-						refreshControl={
-							<RefreshControl
-								refreshing={refreshing}
-								onRefresh={onRefresh}
-							/>
-						}
-						contentContainerStyle={{
-							paddingBottom: 120,
-						}}
-					>
-						<View style={styles.heroWrap}>
-							<LinearGradient
-								colors={[
-									theme.colors.light.primary,
-									theme.colors.light.primary_dark,
-								]}
-								style={styles.heroCard}
-							>
-								<View style={styles.bgCircleLarge} />
-								<View style={styles.bgCircleSmall} />
-
-								<View style={globalStyles.cardRow}>
-									<CText style={styles.heroLabel}>Overview</CText>
-									<View style={globalStyles.cardRow}>
-										<CText style={styles.heroLabel}>Avg TAT (hrs) </CText>
-										<CText fontSize={20} style={{ color: '#fff'}} fontStyle={'SB'}>{dashboardData?.avgTatHours}</CText>
-									</View>
-								</View>
-
-								<View style={styles.heroTopRow}>
-									<View style={styles.heroTopItem}>
-										<CText style={styles.heroValue}>
-											{formatNumber(dashboardData?.totalLogs || 0)}
-										</CText>
-										<CText style={styles.heroSub}>Total Logs</CText>
-									</View>
-
-									<View style={styles.heroTopItem}>
-										<CText style={styles.heroValue}>
-											{formatNumber(
-												dashboardData?.stats?.totalCount || 0
-											)}
-										</CText>
-										<CText style={styles.heroSub}>Total Documents</CText>
-									</View>
-								</View>
-
-								<View style={styles.heroDivider} />
-
-								{/* STATUS COUNTS */}
-								<View style={styles.heroStatsRow}>
-									{[
-										{
-											label: 'Incoming',
-											value: dashboardData?.stats?.Incoming,
-										},
-										{
-											label: 'Completed',
-											value: dashboardData?.stats?.Done,
-										},
-										{
-											label: 'Outgoing',
-											value: dashboardData?.stats?.Outgoing,
-										},
-										{
-											label: 'Overdue',
-											value: dashboardData?.stats?.Overdue,
-										},
-									].map((item, idx) => (
-										<View key={idx} style={styles.heroStat}>
-											<CText style={styles.heroStatValue}>
-												{formatNumber(item.value || 0)}
-											</CText>
-											<CText style={styles.heroStatLabel}>
-												{item.label}
-											</CText>
-										</View>
-									))}
-								</View>
-							</LinearGradient>
-						</View>
-
-
-						<View style={styles.section}>
-							<CText fontStyle="B" fontSize={18}>
-								Recent Activity
-							</CText>
-
-							{dashboardData?.latestLogs?.map(item => (
-								<TouchableOpacity
-									key={item.id}
-									style={styles.activityRow}
-									onPress={() =>
-										navigation.navigate(
-											'ScanQRDetails',
-											{
-												qr_code:
-												item.record
-													?.QRCODE,
-											}
-										)
-									}
-								>
-									<Icon
-										name="document-text-outline"
-										size={18}
-										color={
-											theme.colors.light.primary
-										}
-									/>
-									<View
-										style={{
-											flex: 1,
-											marginLeft: 12,
-										}}
-									>
-										<CText
-											fontStyle="B"
-											numberOfLines={1}
-										>
-											{
-												item.record
-													?.Description
-											}
-										</CText>
-										<CText style={styles.meta}>
-											{formatDate(
-												item.created_at
-											)}
-										</CText>
-									</View>
-								</TouchableOpacity>
-							))}
-						</View>
-
-						{network?.isConnected === false && (
-							<View style={styles.offline}>
+						{query.length > 0 && (
+							<TouchableOpacity onPress={() => setQuery('')}>
 								<Icon
-									name="cloud-offline-outline"
-									size={16}
-									color="#fff"
+									name="close-circle"
+									size={18}
+									color="#bbb"
 								/>
-								<CText
-									style={styles.offlineText}
-								>
-									Offline mode
-								</CText>
-							</View>
+							</TouchableOpacity>
 						)}
-					</ScrollView>
+					</View>
 				</View>
+				<View style={styles.categoryWrap}>
+					<FlatList
+						data={CATEGORIES}
+						keyExtractor={item => item}
+						horizontal
+						showsHorizontalScrollIndicator={false}
+						renderItem={({ item }) => (
+							<TouchableOpacity
+								style={[
+									styles.categoryChip,
+									activeCategory === item &&
+									styles.categoryActive,
+								]}
+								onPress={() => setActiveCategory(item)}
+							>
+								<CText
+									style={[
+										styles.categoryText,
+										activeCategory === item &&
+										styles.categoryTextActive,
+									]}
+								>
+									{item}
+								</CText>
+							</TouchableOpacity>
+						)}
+					/>
+				</View>
+				<ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
+					<View style={styles.section}>
+						<FlatList
+							data={filteredProducts}
+							keyExtractor={item => item.id.toString()}
+							numColumns={2}
+							scrollEnabled={false}
+							columnWrapperStyle={{
+								justifyContent: 'space-between',
+								marginBottom: 14,
+							}}
+							renderItem={({ item }) => (
+								<TouchableOpacity
+									style={styles.productCard}
+									activeOpacity={0.85}
+								>
+									<View style={styles.productImageWrap}>
+										<Image
+											source={{ uri: item.image }}
+											style={{ width: '100%', height: '100%' }}
+											resizeMode="cover"
+										/>
+									</View>
+
+									<CText
+										numberOfLines={2}
+										style={styles.productName}
+									>
+										{item.name}
+									</CText>
+
+									<CText style={styles.productPrice}>
+										₱ {formatNumber(item.price)}
+									</CText>
+
+									{item.stock <= 5 && (
+										<View style={styles.stockBadge}>
+											<CText style={styles.stockText}>
+												Low stock
+											</CText>
+										</View>
+									)}
+								</TouchableOpacity>
+							)}
+							ListEmptyComponent={
+								<CText style={styles.emptyText}>
+									No products found
+								</CText>
+							}
+						/>
+					</View>
+				</ScrollView>
 			</SafeAreaView>
 		</>
 	);
@@ -427,177 +227,97 @@ const HomeScreen = ({ navigation }) => {
 
 export default HomeScreen;
 
-const styles = StyleSheet.create({
-	heroTopRow: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		marginTop: 10,
-	},
-	heroTopItem: {
-		flex: 1,
-	},
+/* ===================== STYLES ===================== */
 
+const styles = StyleSheet.create({
 	searchBox: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		backgroundColor: '#fff',
-		borderRadius: 16,
-		paddingHorizontal: 14,
-		paddingVertical: 12,
-		marginTop: 14,
-		elevation: 3,
+		borderRadius: theme.radius.md,
+		paddingHorizontal: 12,
+		paddingVertical: 3,
+		elevation: 1,
 	},
 	searchInput: {
 		flex: 1,
-		marginHorizontal: 8,
+		marginHorizontal: 10,
 		fontSize: 14,
 		color: '#000',
 	},
 
-	searchOverlay: {
-		position: 'absolute',
-		top: '22%',
-		left: 0,
-		right: 0,
-		bottom: 0,
-		backgroundColor: theme.colors.light.card,
-		borderTopLeftRadius: 24,
-		borderTopRightRadius: 24,
-		zIndex: 20,
-	},
-	searchHandle: {
-		width: 40,
-		height: 4,
-		backgroundColor: '#ccc',
-		borderRadius: 2,
-		alignSelf: 'center',
-		marginVertical: 10,
-	},
-	searchLoading: {
+	categoryWrap: {
 		paddingHorizontal: 16,
-		paddingTop: 20,
-	},
-	searchRow: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		backgroundColor: '#fff',
-		borderRadius: 14,
-		padding: 14,
-		marginHorizontal: 16,
 		marginBottom: 10,
-		elevation: 1,
 	},
-	searchIconWrap: {
-		width: 36,
-		height: 36,
-		borderRadius: 18,
-		backgroundColor: '#F3F6FA',
-		alignItems: 'center',
-		justifyContent: 'center',
-		marginRight: 12,
+	categoryChip: {
+		paddingHorizontal: 14,
+		paddingVertical: 8,
+		borderRadius: theme.radius.md,
+		backgroundColor: '#F1F1F1',
+		marginRight: 10,
 	},
-	emptySearch: {
-		alignItems: 'center',
-		marginTop: 40,
+	categoryActive: {
+		backgroundColor: theme.colors.light.primary,
 	},
-	meta: {
-		fontSize: 12,
-		color: '#777',
-		marginTop: 2,
-	},
-
-	heroWrap: {
-		marginHorizontal: 16,
-		marginBottom: 16,
-	},
-	heroCard: {
-		borderRadius: 20,
-		padding: 20,
-	},
-	heroLabel: {
-		color: '#fff',
+	categoryText: {
 		fontSize: 13,
-		opacity: 0.85,
+		color: '#333',
 	},
-	heroValue: {
+	categoryTextActive: {
 		color: '#fff',
-		fontSize: 35,
-		fontWeight: '700',
-		marginTop: 4,
-	},
-	heroSub: {
-		color: '#fff',
-		fontSize: 13,
-		opacity: 0.8,
-	},
-	heroDivider: {
-		height: 1,
-		backgroundColor: 'rgba(255,255,255,0.25)',
-		marginVertical: 14,
-	},
-	heroStatsRow: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-	},
-	heroStat: {
-		flex: 1,
-		alignItems: 'center',
-	},
-	heroStatValue: {
-		color: '#fff',
-		fontSize: 18,
-		fontWeight: '700',
-	},
-	heroStatLabel: {
-		color: '#fff',
-		fontSize: 12,
-		opacity: 0.8,
-		marginTop: 2,
+		fontWeight: '600',
 	},
 
 	section: {
 		paddingHorizontal: 16,
 	},
-	activityRow: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		backgroundColor: '#fff',
-		borderRadius: 14,
-		padding: 14,
-		marginTop: 12,
-		elevation: 1,
-	},
 
-	offline: {
-		flexDirection: 'row',
+	productCard: {
+		width: '48%',
+		backgroundColor: '#fff',
+		borderRadius: theme.radius.sm,
+		overflow: 'hidden',
+		elevation: 2,
+	},
+	productImageWrap: {
+		height: 150,
+		backgroundColor: '#F5F5F5',
 		alignItems: 'center',
-		backgroundColor: theme.colors.light.danger,
-		margin: 16,
-		padding: 10,
-		borderRadius: 10,
 		justifyContent: 'center',
 	},
-	offlineText: {
-		color: '#fff',
-		marginLeft: 6,
+	productName: {
+		fontSize: 13,
+		paddingHorizontal: 8,
+		marginTop: 8,
+		color: '#222',
+	},
+	productPrice: {
+		fontSize: 15,
+		fontWeight: '700',
+		color: theme.colors.light.primary,
+		paddingHorizontal: 8,
+		marginTop: 6,
+		marginBottom: 8,
 	},
 
-	bgCircleLarge: {
+	stockBadge: {
 		position: 'absolute',
-		width: 220,
-		height: 220,
-		borderRadius: 110,
-		backgroundColor: 'rgba(255,255,255,0.1)',
-		top: -80,
-		right: -60,
+		top: 8,
+		left: 8,
+		backgroundColor: theme.colors.light.danger,
+		borderRadius: 6,
+		paddingHorizontal: 6,
+		paddingVertical: 2,
 	},
-	bgCircleSmall: {
-		position: 'absolute',
-		width: 120,
-		height: 120,
-		borderRadius: 60,
-		backgroundColor: 'rgba(255,255,255,0.1)',
-		bottom: -40,
-		left: -30,
+	stockText: {
+		fontSize: 10,
+		color: '#fff',
+	},
+
+	emptyText: {
+		paddingVertical: 20,
+		color: '#777',
+		textAlign: 'center',
 	},
 });
