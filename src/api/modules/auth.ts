@@ -12,21 +12,15 @@ export const authLogin = async (requestData) => {
 
 export const loginWithGoogle = async ({
                                           token,
-                                          name,
-                                          email,
-                                          photo
+                                            email
                                       }: {
     token: string;
-    name: string;
     email: string;
-    photo: string;
 }) => {
     console.log(`${API_BASE_URL}/auth/google`)
     return api.post(`${API_BASE_URL}/auth/google`, {
         token,
-        name,
         email,
-        photo
     });
 };
 

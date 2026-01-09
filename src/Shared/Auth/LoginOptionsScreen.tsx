@@ -24,6 +24,7 @@ import { APP_NAME, TAGLINE, GOOGLE_CLIENT_ID } from '../../../env';
 import { isTablet } from '../../utils/responsive';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { handleApiError } from '../../utils/errorHandler.ts';
+import auth from '@react-native-firebase/auth';
 
 const { width } = Dimensions.get('window');
 
@@ -74,31 +75,51 @@ export default function LoginOptionsScreen() {
 
 	const handleGoogleLogin = async () => {
 		try {
-			showLoading('Signing in...');
 			await GoogleSignin.hasPlayServices();
 			await GoogleSignin.signOut();
 
 			const userInfo = await GoogleSignin.signIn();
-			const tokens = await GoogleSignin.getTokens();
+			const userData = userInfo?.data;
 
-			console.log(userInfo);
+			const idToken = userData?.idToken;
+			if (!idToken) {
+				throw new Error('No Google ID token returned');
+			}
+
+			showLoading('Logging in...');
+
+			const googleCredential =
+				auth.GoogleAuthProvider.credential(idToken);
+
+			await auth().signInWithCredential(googleCredential);
+
+
 			const response = await loginWithGoogle({
-				token: tokens.idToken,
-				name: userInfo.user.name,
-				email: userInfo.user.email,
-				photo: userInfo.user.photo,
+				token: idToken,
+				email: userData?.user?.email,
 			});
 
-			console.log(response.data);
-
 			await loginAuth(response.data);
-		} catch(err) {
-			showAlert('error', 'Login Failed', 'Google Sign-In failed.');
-			handleApiError(err, 'Google Login');
+		} catch (error) {
+			console.error(
+				'Google login failed:',
+				error.response?.data || error.message
+			);
+
+			handleApiError(error, 'Google Login');
+
+			showAlert(
+				'error',
+				'Error',
+				error?.response?.data?.message ||
+				error?.message ||
+				'Google login failed'
+			);
 		} finally {
 			hideLoading();
 		}
 	};
+
 
 	return (
 		<SafeAreaView style={styles.container}>

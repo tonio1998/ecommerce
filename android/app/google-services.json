@@ -33,6 +33,43 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:75170860680:android:084a5ad0067a38fd9e593d",
+        "android_client_info": {
+          "package_name": "com.jun.ecommerce"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "75170860680-ek2gs3uaafrshna4j69ehonoguhn55nu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jun.ecommerce",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "75170860680-iugg9obg1c32e3btmqo800h1med0oqvq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjXWfM5zh3ItcVlhudLK0W7iLS5Rgbzb4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "75170860680-iugg9obg1c32e3btmqo800h1med0oqvq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

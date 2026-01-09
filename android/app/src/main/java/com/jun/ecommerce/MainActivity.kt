@@ -1,4 +1,4 @@
-package com.ecommerce
+package com.jun.ecommerce
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
