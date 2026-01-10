@@ -1,142 +1,71 @@
-// BLUE AND VIOLET
-// primary: '#3E13DA',
-//         primary_soft: '#5314E4',
-//         secondary: '#921BFD',
-//         secondary_soft: '#02801C',
-
-// DARK BLUE AND VIOLET
-// primary: '#3E13DA',
-//         primary_soft: '#5314E4',
-//         secondary: '#921BFD',
-//         secondary_soft: '#02801C',
-
-// SNSU GREEN
-// primary: '#006400',
-//     secondary: '#228B22',
-
-// BLUE
-// primary: '#0951C7',
-//     secondary: '#2366C7',
-
-// primary: '#007848',
-//     primary_dark: '#0a3300',
-//     primary_light: '#ade254',
-//     button: '#005431',
-//     secondary: '#f29c00',
-
-// primary: '#7c40ff',
-//     primary_dark: '#773DFF',
-//     primary_light: '#9A70FF',
-//     button: '#005431',
-//     secondary: '#7209B7',
-
-
-// PURPLE
-// primary: '#7c40ff',
-//     primary_dark: '#773DFF',
-//     primary_light: '#9A70FF',
-//     button: '#7800cf',
-//     secondary: '#7209B7',
 const colors = {
     light: {
-        // --- Backgrounds & Surfaces (Retained) ---
-        background: '#EBEDEB',
-        surface: '#F9FAFB',
+        background: '#F4F7FB',
+        surface: '#FFFFFF',
         card: '#FFFFFF',
         muted: '#E5E7EB',
         muted_soft: '#F1F5F9',
 
-        // --- Text & Borders ---
-        text: '#1A1A1A',
-        text_secondary: '#6B7280',
-        border: '#E5E7EB',
+        text: '#0F172A',
+        text_secondary: '#64748B',
+        border: '#E2E8F0',
         inputBackground: '#FFFFFF',
 
-        // --- Brand Colors (Darker Green based on Logo) ---
-        primary: '#0F3A65',        // BuildMart navy blue
-        primary_dark: '#0B2C4D',   // darker navy for headers/status bars
-        primary_light: '#3E6F9E',  // lighter blue for highlights
-        button: '#E87536',         // BuildMart orange (CTAs)
-        secondary: '#E87536',      // same orange for consistency
+        primary: '#0B5ED7',
+        primary_dark: '#083A8C',
+        primary_light: '#60A5FA',
+        button: '#14B8A6',
+        secondary: '#22C55E',
 
-
-        // PURPLE
-        // primary: '#7c40ff',
-        // primary_dark: '#633CD0',
-        // primary_light: '#9A70FF',
-        // button: '#7800cf',
-        // secondary: '#7209B7',
-
-        // FOODPANDA PINK
-        // primary: '#D70F64',        // Foodpanda Pink (brand primary)
-        // primary_dark: '#B50D54',   // Darker pink for headers / pressed states
-        // primary_light: '#F06292',  // Softer pink for highlights / backgrounds
-        // button: '#D70F64',         // Strong CTA (same as primary, Foodpanda-style)
-        // secondary: '#8E004D',      // Deep berry for contrast / secondary actions
-
-
-        // TEAL GREEN
-        // primary: '#0F766E',        // Teal Green – main brand / trust
-        // primary_dark: '#115E59',   // Headers, app bar
-        // primary_light: '#5EEAD4',  // Cards, highlights
-        // button: '#0F766E',         // Primary actions
-        // secondary: '#1E3A8A',      // Navy Blue – authority / secondary actions
-
-
-
-        // --- Status Colors (Based on Logo/Standard Meanings) ---
         success: '#22C55E',
         success_soft: '#DCFCE7',
 
-        danger: '#CC4747',         // 🔥 Red/Orange (Logo Flame)
+        danger: '#EF4444',
         danger_soft: '#FEE2E2',
 
-        warning: '#FACC15',        // 🟡 Bright Gold/Yellow (Logo Rays)
+        warning: '#FACC15',
         warning_soft: '#FEF3C7',
 
-        info: '#3A7BFC',
-        info_soft: '#DBEAFE',
+        info: '#0EA5E9',
+        info_soft: '#E0F2FE',
 
-        // --- Accents ---
-        link: '#005431',           // Dark link color
-        highlight: '#FACC15',
+        link: '#0B5ED7',
+        highlight: '#14B8A6',
     },
 
     dark: {
-        // --- Backgrounds & Surfaces ---
-        background: '#121212',
-        surface: '#1E1E1E',
-        card: '#242424',
-        muted: '#3A3A3A',
-        muted_soft: '#2C2C2C',
+        background: '#0B1220',
+        surface: '#111827',
+        card: '#1F2933',
+        muted: '#374151',
+        muted_soft: '#1E293B',
 
-        // --- Text & Borders ---
-        text: '#F0F0F0',
-        text_secondary: '#B0B0B0',
-        border: '#3A3A3A',
-        inputBackground: '#1E1E1E',
+        text: '#F8FAFC',
+        text_secondary: '#CBD5E1',
+        border: '#334155',
+        inputBackground: '#111827',
 
-        // --- Brand Colors (Darker Green based on Logo - Adjusted for Dark Mode Contrast) ---
-        primary: '#009756',        // 🟢 Bright enough deep green for contrast
-        primary_dark: '#007A46',
-        primary_light: '#A8F0C6',
-        button: '#007A46',
-        secondary: '#FFEB3B',      // 🌟 Brighter Gold/Yellow
+        primary: '#60A5FA',
+        primary_dark: '#0B5ED7',
+        primary_light: '#93C5FD',
+        button: '#14B8A6',
+        secondary: '#22C55E',
 
-        // --- Status Colors ---
-        success: '#66BB6A',
-        success_soft: '#1B5E20',
-        danger: '#FF6F6F',
-        danger_soft: '#B71C1C',
-        warning: '#FFD740',
-        warning_soft: '#F57F17',
-        info: '#42A5F5',
-        info_soft: '#0D47A1',
+        success: '#4ADE80',
+        success_soft: '#14532D',
 
-        // --- Accents ---
-        link: '#80DEEA',
-        highlight: '#FFD740',
-    }
+        danger: '#F87171',
+        danger_soft: '#7F1D1D',
+
+        warning: '#FDE047',
+        warning_soft: '#713F12',
+
+        info: '#38BDF8',
+        info_soft: '#075985',
+
+        link: '#60A5FA',
+        highlight: '#14B8A6',
+    },
 };
 
 const spacing = {
@@ -146,57 +75,23 @@ const spacing = {
     md: 16,
     lg: 24,
     xl: 32,
-    xxl: 40,
+    xxl: 48,
+    xxxl: 64,
 };
 
+
 const fontSizes = {
-    xxs: 8,
     xs: 12,
     sm: 14,
     md: 16,
     lg: 18,
-    xl: 24,
-    xxl: 32,
-    xxxl: 40,
+    xl: 20,
+    xxl: 24,
+    xxxl: 32,
+    display: 40,
 };
 
-// export const font = {
-//     regular: 'Poppins-Regular',
-//     medium: 'Poppins-Medium',
-//     semiBold: 'Poppins-SemiBold',
-//     bold: 'Poppins-Bold',
-//     italic: 'Poppins-Italic',
-// };
 
-// export const font = {
-//     regular: 'MazzardSoftH-Regular',
-//     medium: 'Poppins-Medium',
-//     semiBold: 'MazzardSoftH-SemiBold',
-//     bold: 'Poppins-Bold',
-//     italic: 'Poppins-Italic',
-// };
-
-// export const font = {
-//     regular: 'Roboto-Regular',
-//     medium: 'Roboto-Medium',
-//     semiBold: 'Roboto-SemiBold',
-//     bold: 'Roboto-Bold',
-//     italic: 'Roboto-Italic',
-//     light: 'Roboto-Light',
-//     thin: 'Roboto-Thin',
-//     black: 'Roboto-Black',
-// };
-
-// export const font = {
-//     regular: 'Montserrat-Regular',
-//     medium: 'Montserrat-Medium',
-//     semiBold: 'Montserrat-SemiBold',
-//     bold: 'Montserrat-Bold',
-//     italic: 'Montserrat-Italic',
-//     light: 'Montserrat-Light',
-//     thin: 'Montserrat-Thin',
-//     black: 'Montserrat-Black',
-// };
 export const font = {
     thin: 'Inter_28pt-Thin',
     extraLight: 'Inter_28pt-ExtraLight',
@@ -209,7 +104,6 @@ export const font = {
     black: 'Inter_28pt-Black',
 };
 
-
 export const fontPoppins = {
     regular: 'Poppins-Regular',
     medium: 'Poppins-Medium',
@@ -221,23 +115,20 @@ export const fontPoppins = {
     black: 'Poppins-Black',
 };
 
-
-
 export const FontFamily = 'MazzardSoftH-SemiBold';
 export const FontFamilyNormal = 'MazzardSoftH-Regular';
 
 export const radius = {
     none: 0,
-    xs: 4,
-    sm: 8,
-    md: 12,
-    lg: 14,
+    xs: 2,
+    sm: 4,
+    md: 8,
+    lg: 12,
     xl: 16,
-    xxl: 18,
-    xxxl: 22,
-    xxxxl: 30,
+    xxl: 24,
     full: 9999,
 };
+
 
 export const elevation = {
     none: 0,
@@ -265,6 +156,7 @@ export const theme = {
     fontPoppins,
     radius,
     elevation,
-    opacity, FLOATING_NAV_HEIGHT, PADDING_TOP
-
+    opacity,
+    FLOATING_NAV_HEIGHT,
+    PADDING_TOP,
 };

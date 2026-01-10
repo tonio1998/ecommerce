@@ -32,6 +32,11 @@ import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
 import {FiscalYearProvider} from "./src/context/FiscalYearContext.tsx";
 import {useAccess} from "./src/hooks/useAccess.ts";
+import ProductSearchScreen from './src/screens/Pos/ProductSearchScreen.tsx';
+import PriceInquiryScreen from './src/screens/Pos/PriceInquiryScreen.tsx';
+import PosScreen from './src/screens/Pos/PosScreen.tsx';
+import ProfileScreen from './src/Shared/User/UserProfileScreen.tsx';
+import { VendorProvider } from './src/context/VendorContext.tsx';
 const Stack = createNativeStackNavigator();
 LogBox.ignoreLogs(['Text strings must be rendered within a <Text> component']);
 
@@ -119,11 +124,13 @@ const AppNavigator = () => {
     if (!user) {
         return (
             <>
-                <GestureHandlerRootView style={{ flex: 1 }}>
-                    <NavigationContainer>
-                        <UnauthenticatedStack />
-                    </NavigationContainer>
-                </GestureHandlerRootView>
+                <SafeAreaProvider>
+                    <GestureHandlerRootView style={{ flex: 1 }}>
+                        <NavigationContainer>
+                            <UnauthenticatedStack />
+                        </NavigationContainer>
+                    </GestureHandlerRootView>
+                </SafeAreaProvider>
             </>
         );
     }
@@ -131,19 +138,29 @@ const AppNavigator = () => {
     return (
         <>
             <SafeAreaProvider>
-                <AccessProvider>
-                    <GestureHandlerRootView style={{ flex: 1 }}>
-                        <NavigationContainer ref={navigationRef} onReady={tryFlushPendingNavigation}>
-                            <Stack.Navigator screenOptions={{ headerShown: false }}>
-                                <Stack.Screen
-                                    name="MainTabs"
-                                    component={BottomTabNav}
-                                />
-                            </Stack.Navigator>
+                <SafeAreaProvider>
+                    <AccessProvider>
+                        <GestureHandlerRootView style={{ flex: 1 }}>
+                            <NavigationContainer ref={navigationRef} onReady={tryFlushPendingNavigation}>
+                                <Stack.Navigator screenOptions={{ headerShown: false }}>
+                                    <Stack.Screen
+                                        name="MainTabs"
+                                        component={BottomTabNav}
+                                    />
+                                    <Stack.Screen name={'POS'} component={PosScreen} />
+                                    <Stack.Screen name="PriceInquiry" component={PriceInquiryScreen} />
+                                    <Stack.Screen
+                                        name="ProductSearch"
+                                        component={ProductSearchScreen}
+                                    />
+                                    <Stack.Screen name={"Profile"} component={ProfileScreen} />
+                                    <Stack.Screen name={"AcademicYear"} component={FiscalYearProvider} />
+                                </Stack.Navigator>
 
-                        </NavigationContainer>
-                    </GestureHandlerRootView>
-                </AccessProvider>
+                            </NavigationContainer>
+                        </GestureHandlerRootView>
+                    </AccessProvider>
+                </SafeAreaProvider>
             </SafeAreaProvider>
         </>
     );
@@ -156,7 +173,9 @@ export default function App(): React.JSX.Element {
                 <NetworkProvider>
                     <AuthProvider>
                         <FiscalYearProvider>
-                            <AppNavigator />
+                            <VendorProvider>
+                                <AppNavigator />
+                            </VendorProvider>
                         </FiscalYearProvider>
                     </AuthProvider>
                     <StatusIndicator />

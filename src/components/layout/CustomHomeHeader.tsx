@@ -5,22 +5,17 @@ import {
     StyleSheet,
     Image,
     StatusBar,
-    Platform,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { theme } from '../../theme';
 import { useAuth } from '../../context/AuthContext';
 import { FILE_BASE_URL } from '../../../env';
 import { navigate } from '../../utils/navigation';
-import { CText } from '../common/CText';
 import { isTablet } from '../../utils/responsive';
 
-const CustomHomeHeader = ({
-                              cartCount = 0,
-                              rightContent = null,
-                          }) => {
+const CustomHomeHeader = ({ rightContent = null }) => {
     const navigation = useNavigation();
     const { user } = useAuth();
 
@@ -34,7 +29,7 @@ const CustomHomeHeader = ({
         return {
             uri: `https://ui-avatars.com/api/?name=${encodeURIComponent(
                 user?.name || 'User'
-            )}&background=random`,
+            )}&background=ffffff&color=000000`,
         };
     }, [user]);
 
@@ -42,14 +37,14 @@ const CustomHomeHeader = ({
         <>
             <StatusBar
                 barStyle="dark-content"
-                backgroundColor="transparent"
-                translucent
+                backgroundColor="#ffffff"
+                translucent={false}
             />
 
-            <View style={styles.headerWrapper}>
-                <View style={styles.headerContent}>
+            <SafeAreaView edges={['bottom']} style={[styles.safeArea]}>
+                <View style={styles.header}>
                     <TouchableOpacity
-                        activeOpacity={0.8}
+                        activeOpacity={0.85}
                         onPress={() => navigate('Home')}
                     >
                         <Image
@@ -61,96 +56,56 @@ const CustomHomeHeader = ({
 
                     <View style={styles.actions}>
                         <TouchableOpacity
-                            style={styles.iconBtn}
-                            onPress={() => navigation.navigate('ProductSearch')}
+                            style={styles.avatarWrapper}
+                            onPress={() => navigation.navigate('Profile')}
                         >
-                            <Icon
-                                name="search-outline"
-                                size={22}
-                                color={theme.colors.light.text}
-                            />
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                            style={styles.iconBtn}
-                            onPress={() => navigation.navigate('Cart')}
-                        >
-                            <Icon
-                                name="cart-outline"
-                                size={22}
-                                color={theme.colors.light.text}
-                            />
-                            {cartCount > 0 && (
-                                <View style={styles.badge}>
-                                    <CText size={10} color="#fff">
-                                        {cartCount}
-                                    </CText>
-                                </View>
-                            )}
+                            <Image source={avatarSource} style={styles.avatar} />
                         </TouchableOpacity>
 
                         {rightContent}
                     </View>
                 </View>
-            </View>
+            </SafeAreaView>
         </>
     );
 };
 
+export default CustomHomeHeader;
 const styles = StyleSheet.create({
-    headerWrapper: {
-        position: 'absolute',
-        top:
-            Platform.OS === 'android'
-                ? (StatusBar.currentHeight || 24) + 6
-                : 44,
-        left: 0,
-        right: 0,
-        paddingHorizontal: 10,
-        zIndex: 10,
+    safeArea: {
+        backgroundColor: theme.colors.light.card,
     },
-    headerContent: {
+
+    header: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
+        paddingHorizontal: 14,
+        paddingVertical: 0,
     },
+
     logo: {
         width: isTablet() ? 180 : 140,
-        height: 42,
+        height: 50
     },
+
     actions: {
         flexDirection: 'row',
         alignItems: 'center',
     },
-    iconBtn: {
-        marginHorizontal: 6,
-        padding: 6,
-    },
-    badge: {
-        position: 'absolute',
-        top: -4,
-        right: -4,
-        minWidth: 16,
-        height: 16,
-        borderRadius: 8,
-        backgroundColor: theme.colors.light.primary,
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingHorizontal: 3,
-    },
+
     avatarWrapper: {
-        width: 38,
-        height: 38,
-        borderRadius: 19,
+        width: 36,
+        height: 36,
+        borderRadius: 18,
         overflow: 'hidden',
-        borderWidth: 2,
+        borderWidth: 1.5,
         borderColor: theme.colors.light.primary,
         marginLeft: 6,
     },
+
     avatar: {
         width: '100%',
         height: '100%',
     },
 });
-
-export default CustomHomeHeader;

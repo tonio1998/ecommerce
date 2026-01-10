@@ -1,14 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
 	View,
 	StyleSheet,
-	SafeAreaView,
+	ScrollView,
 	TouchableOpacity,
-	TextInput,
 	FlatList,
-	ScrollView, Image,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { globalStyles } from '../theme/styles';
 import { CText } from '../components/common/CText';
@@ -16,308 +15,225 @@ import { theme } from '../theme';
 import CustomHomeHeader from '../components/layout/CustomHomeHeader';
 import { formatNumber } from '../utils/format';
 
-
-const CATEGORIES = [
-	'All',
-	'Electronics',
-	'Fashion',
-	'Home',
-	'Food',
-	'Beauty',
+const QUICK_LINKS = [
+	{ id: 'sale', label: 'New Sale', icon: 'cart-outline', Screen: 'POS' },
+	{ id: 'inventory', label: 'Inventory', icon: 'archive-outline', Screen: 'Inventory' },
+	{ id: 'products', label: 'Products', icon: 'cube-outline', Screen: 'Products' },
+	{ id: 'reports', label: 'Reports', icon: 'bar-chart-outline' },
 ];
 
-const PRODUCTS = [
-	{
-		id: 1,
-		name: 'Portland Cement (40kg)',
-		price: 275,
-		category: 'Construction Materials',
-		stock: 120,
-		image: 'https://gratisongkir-storage.com/products/900x900/uKdcDZ0jJJQB.jpg',
-	},
-	{
-		id: 2,
-		name: 'Deformed Steel Bar (10mm)',
-		price: 420,
-		category: 'Steel & Metal',
-		stock: 80,
-		image: 'https://image.made-in-china.com/2f0j00fUhkFHSKnWqP/Latest-HRB400-Grade-Dia-10mm-Steel-Rebar-Deformed-Steel-Bar-Iron-Rods-with-Rib-Fe-500-Steel-Rebar.jpg',
-	},
-	{
-		id: 3,
-		name: 'Concrete Hollow Blocks (CHB)',
-		price: 18,
-		category: 'Construction Materials',
-		stock: 1500,
-		image: 'https://th.bing.com/th/id/R.78ad31b9cb6be0ee9602c354a7505917?rik=kFi2viGTE3h5tQ&riu=http%3a%2f%2fbhcldavaoconstruction.weebly.com%2fuploads%2f3%2f9%2f5%2f5%2f39551939%2fs716957615216130486_p2_i7_w640.jpeg&ehk=jwaFVv4drfgdE5wR4H%2fuOR5ic47YmmPqAhGMM1ZzLbA%3d&risl=&pid=ImgRaw&r=0',
-	},
-	{
-		id: 4,
-		name: 'Angle Grinder (4")',
-		price: 2499,
-		category: 'Power Tools',
-		stock: 15,
-		image: 'https://c.shld.net/rpx/i/s/i/spin/image/spin_prod_248872001??hei=64&wid=64&qlt=50',
-	},
-	{
-		id: 5,
-		name: 'Electric Drill Machine',
-		price: 3199,
-		category: 'Power Tools',
-		stock: 12,
-		image: 'https://m.media-amazon.com/images/I/81KCtYjRKdS._SL1500_.jpg',
-	},
-	{
-		id: 6,
-		name: 'PVC Pipe (2-inch, 3m)',
-		price: 180,
-		category: 'Plumbing',
-		stock: 200,
-		image: 'https://5.imimg.com/data5/SELLER/Default/2024/12/475799473/ZZ/GF/LL/58169238/casing-pipes-1000x1000.webp',
-	},
-	{
-		id: 7,
-		name: 'Construction Safety Helmet',
-		price: 350,
-		category: 'Safety Gear',
-		stock: 45,
-		image: 'https://agrarzone.com/media/36/7d/e6/1700636370/schutzhelm-gelb-main-jpg_689e268d2984c9c2.jpg',
-	},
-	{
-		id: 8,
-		name: 'Paint Roller Set',
-		price: 299,
-		category: 'Finishing',
-		stock: 60,
-		image: 'https://m.media-amazon.com/images/I/61FpKnqcuWL._AC_SL1500_.jpg',
-	},
+const RECENT_TRANSACTIONS = [
+	{ id: 'TRX-10021', time: '10:32 AM', total: 245 },
+	{ id: 'TRX-10020', time: '10:18 AM', total: 1280 },
+	{ id: 'TRX-10019', time: '09:54 AM', total: 560 },
+	{ id: 'TRX-10018', time: '09:20 AM', total: 95 },
 ];
 
-
-
-/* ===================== SCREEN ===================== */
-
-const HomeScreen = () => {
-	const [query, setQuery] = useState<string>('');        // SAFE string
-	const [activeCategory, setActiveCategory] = useState<string>('All');
-
-	// normalize search text (prevents toLowerCase crash)
-	const safeQuery = (query ?? '').toString().toLowerCase();
-
-	const filteredProducts = PRODUCTS.filter(item => {
-		const matchCategory =
-			activeCategory === 'All' || item.category === activeCategory;
-
-		const matchQuery =
-			(item.name ?? '').toLowerCase().includes(safeQuery);
-
-		return matchCategory && matchQuery;
-	});
-
+const HomeScreen = ({ navigation }) => {
 	return (
-		<>
-			<CustomHomeHeader />
+		<View style={globalStyles.safeArea}>
+			<SafeAreaView edges={['top']} style={{ backgroundColor: '#fff' }}>
+				<CustomHomeHeader />
+			</SafeAreaView>
+			<View style={{ flex: 1 }}>
+				<ScrollView contentContainerStyle={styles.scrollContent}>
+					<View style={styles.container}>
+						<View style={styles.kpiRow}>
+							<View style={styles.kpiCard}>
+								<Icon name="cash-outline" size={24} color={theme.colors.light.primary} />
+								<CText style={styles.kpiLabel}>Total Sales (Today)</CText>
+								<CText style={styles.kpiValue}>₱ {formatNumber(18450)}</CText>
+							</View>
 
-			<SafeAreaView style={globalStyles.safeArea}>
-				<View style={globalStyles.p_2}>
-					<View style={styles.searchBox}>
-						<Icon name="search-outline" size={18} color="#999" />
-						<TextInput
-							placeholder="Search products…"
-							value={query}
-							onChangeText={text => setQuery(text ?? '')}
-							style={styles.searchInput}
-							placeholderTextColor={'#999'}
-						/>
-						{query.length > 0 && (
-							<TouchableOpacity onPress={() => setQuery('')}>
-								<Icon
-									name="close-circle"
-									size={18}
-									color="#bbb"
-								/>
-							</TouchableOpacity>
-						)}
-					</View>
-				</View>
-				<View style={styles.categoryWrap}>
-					<FlatList
-						data={CATEGORIES}
-						keyExtractor={item => item}
-						horizontal
-						showsHorizontalScrollIndicator={false}
-						renderItem={({ item }) => (
-							<TouchableOpacity
-								style={[
-									styles.categoryChip,
-									activeCategory === item &&
-									styles.categoryActive,
-								]}
-								onPress={() => setActiveCategory(item)}
-							>
-								<CText
-									style={[
-										styles.categoryText,
-										activeCategory === item &&
-										styles.categoryTextActive,
-									]}
-								>
-									{item}
-								</CText>
-							</TouchableOpacity>
-						)}
-					/>
-				</View>
-				<ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
-					<View style={styles.section}>
-						<FlatList
-							data={filteredProducts}
-							keyExtractor={item => item.id.toString()}
-							numColumns={2}
-							scrollEnabled={false}
-							columnWrapperStyle={{
-								justifyContent: 'space-between',
-								marginBottom: 14,
-							}}
-							renderItem={({ item }) => (
-								<TouchableOpacity
-									style={styles.productCard}
-									activeOpacity={0.85}
-								>
-									<View style={styles.productImageWrap}>
-										<Image
-											source={{ uri: item.image }}
-											style={{ width: '100%', height: '100%' }}
-											resizeMode="cover"
-										/>
-									</View>
+							<View style={styles.kpiCard}>
+								<Icon name="receipt-outline" size={24} color={theme.colors.light.primary} />
+								<CText style={styles.kpiLabel}>Transactions</CText>
+								<CText style={styles.kpiValue}>42</CText>
+							</View>
+						</View>
 
-									<CText
-										numberOfLines={2}
-										style={styles.productName}
+						{/* KPI ROW 2 */}
+						<View style={styles.kpiRow}>
+							<View style={styles.kpiCard}>
+								<Icon name="cube-outline" size={24} color={theme.colors.light.primary} />
+								<CText style={styles.kpiLabel}>Products</CText>
+								<CText style={styles.kpiValue}>1,236</CText>
+							</View>
+
+							<View style={styles.kpiCardDanger}>
+								<Icon name="alert-circle-outline" size={24} color="#fff" />
+								<CText style={styles.kpiLabelDanger}>Low Stock</CText>
+								<CText style={styles.kpiValueDanger}>14</CText>
+							</View>
+						</View>
+
+						{/* QUICK LINKS */}
+						<View style={styles.section}>
+							<CText style={styles.sectionTitle}>Quick Links</CText>
+							<View style={styles.quickLinksRow}>
+								{QUICK_LINKS.map(item => (
+									<TouchableOpacity
+										key={item.id}
+										style={styles.quickLinkCard}
+										activeOpacity={0.8}
+										onPress={() => item.Screen && navigation.navigate(item.Screen)}
 									>
-										{item.name}
-									</CText>
+										<Icon name={item.icon} size={26} color={theme.colors.light.primary} />
+										<CText style={styles.quickLinkText}>{item.label}</CText>
+									</TouchableOpacity>
+								))}
+							</View>
+						</View>
 
-									<CText style={styles.productPrice}>
-										₱ {formatNumber(item.price)}
-									</CText>
-
-									{item.stock <= 5 && (
-										<View style={styles.stockBadge}>
-											<CText style={styles.stockText}>
-												Low stock
+						{/* RECENT TRANSACTIONS */}
+						<View style={styles.section}>
+							<CText style={styles.sectionTitle}>Recent Transactions</CText>
+							<View style={styles.tableCard}>
+								<FlatList
+									data={RECENT_TRANSACTIONS}
+									keyExtractor={item => item.id}
+									scrollEnabled={false}
+									renderItem={({ item }) => (
+										<View style={styles.transactionRow}>
+											<View>
+												<CText style={styles.txId}>{item.id}</CText>
+												<CText style={styles.txTime}>{item.time}</CText>
+											</View>
+											<CText style={styles.txAmount}>
+												₱ {formatNumber(item.total)}
 											</CText>
 										</View>
 									)}
-								</TouchableOpacity>
-							)}
-							ListEmptyComponent={
-								<CText style={styles.emptyText}>
-									No products found
-								</CText>
-							}
-						/>
+								/>
+							</View>
+						</View>
 					</View>
 				</ScrollView>
-			</SafeAreaView>
-		</>
+			</View>
+		</View>
 	);
 };
 
 export default HomeScreen;
-
-/* ===================== STYLES ===================== */
-
 const styles = StyleSheet.create({
-	searchBox: {
+	scrollContent: {
+	},
+
+	container: {
+		paddingHorizontal: 16,
+		paddingTop: 12,
+	},
+
+	kpiRow: {
 		flexDirection: 'row',
-		alignItems: 'center',
+		justifyContent: 'space-between',
+		marginBottom: 14,
+	},
+
+	kpiCard: {
+		width: '48%',
 		backgroundColor: '#fff',
 		borderRadius: theme.radius.md,
-		paddingHorizontal: 12,
-		paddingVertical: 3,
-		elevation: 1,
-	},
-	searchInput: {
-		flex: 1,
-		marginHorizontal: 10,
-		fontSize: 14,
-		color: '#000',
+		padding: 16,
+		elevation: 2,
 	},
 
-	categoryWrap: {
-		paddingHorizontal: 16,
-		marginBottom: 10,
-	},
-	categoryChip: {
-		paddingHorizontal: 14,
-		paddingVertical: 8,
+	kpiCardDanger: {
+		width: '48%',
+		backgroundColor: theme.colors.light.danger,
 		borderRadius: theme.radius.md,
-		backgroundColor: '#F1F1F1',
-		marginRight: 10,
+		padding: 16,
+		elevation: 2,
 	},
-	categoryActive: {
-		backgroundColor: theme.colors.light.primary,
+
+	kpiLabel: {
+		marginTop: 6,
+		fontSize: 12,
+		color: '#555',
 	},
-	categoryText: {
-		fontSize: 13,
-		color: '#333',
+
+	kpiValue: {
+		marginTop: 4,
+		fontSize: 18,
+		fontWeight: '700',
+		color: '#222',
 	},
-	categoryTextActive: {
+
+	kpiLabelDanger: {
+		marginTop: 6,
+		fontSize: 12,
 		color: '#fff',
-		fontWeight: '600',
+	},
+
+	kpiValueDanger: {
+		marginTop: 4,
+		fontSize: 18,
+		fontWeight: '700',
+		color: '#fff',
 	},
 
 	section: {
-		paddingHorizontal: 16,
+		marginTop: 22,
 	},
 
-	productCard: {
-		width: '48%',
-		backgroundColor: '#fff',
-		borderRadius: theme.radius.sm,
-		overflow: 'hidden',
-		elevation: 2,
-	},
-	productImageWrap: {
-		height: 150,
-		backgroundColor: '#F5F5F5',
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	productName: {
-		fontSize: 13,
-		paddingHorizontal: 8,
-		marginTop: 8,
+	sectionTitle: {
+		fontSize: 16,
+		fontWeight: '700',
+		marginBottom: 12,
 		color: '#222',
 	},
-	productPrice: {
-		fontSize: 15,
+
+	quickLinksRow: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		flexWrap: 'wrap',
+	},
+
+	quickLinkCard: {
+		width: '48%',
+		backgroundColor: '#fff',
+		borderRadius: theme.radius.md,
+		paddingVertical: 18,
+		alignItems: 'center',
+		marginBottom: 12,
+		elevation: 2,
+	},
+
+	quickLinkText: {
+		marginTop: 6,
+		fontSize: 13,
+		color: '#333',
+	},
+
+	tableCard: {
+		backgroundColor: '#fff',
+		borderRadius: theme.radius.md,
+		elevation: 2,
+	},
+
+	transactionRow: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		padding: 14,
+		borderBottomWidth: 0.5,
+		borderBottomColor: '#eee',
+	},
+
+	txId: {
+		fontSize: 13,
+		fontWeight: '600',
+		color: '#222',
+	},
+
+	txTime: {
+		fontSize: 11,
+		color: '#777',
+		marginTop: 2,
+	},
+
+	txAmount: {
+		fontSize: 14,
 		fontWeight: '700',
 		color: theme.colors.light.primary,
-		paddingHorizontal: 8,
-		marginTop: 6,
-		marginBottom: 8,
-	},
-
-	stockBadge: {
-		position: 'absolute',
-		top: 8,
-		left: 8,
-		backgroundColor: theme.colors.light.danger,
-		borderRadius: 6,
-		paddingHorizontal: 6,
-		paddingVertical: 2,
-	},
-	stockText: {
-		fontSize: 10,
-		color: '#fff',
-	},
-
-	emptyText: {
-		paddingVertical: 20,
-		color: '#777',
-		textAlign: 'center',
 	},
 });

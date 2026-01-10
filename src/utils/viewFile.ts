@@ -13,7 +13,7 @@ export const viewFile = async (
 ) => {
     try {
         // 1. Ask backend to generate file and return download URL
-        const response = await api.get('/rts/generate-file', {
+        const response = await api.get('/generate-file', {
             params: {
                 RecordID,
                 fileID,

@@ -2,18 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Dimensions, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { theme } from '../theme';
 import { CText } from '../components/common/CText';
 
 import HomeScreen from '../Shared/HomeScreen';
-import ScanScreen from '../screens/Scanner/ScanScreen';
-import RecordsScreen from '../screens/Records/RecordsScreen';
-import AddDocumentScreen from '../screens/Records/AddRecordScreen';
-import UsersScreen from "../screens/user/UsersScreen.tsx";
-import {useAccess} from "../hooks/useAccess.ts";
-import ChatScreen from "../screens/Chat/ChatScreen.tsx";
+import ProductListScreen from '../screens/Pos/ProductListScreen.tsx';
+import { useAccess } from '../hooks/useAccess.ts';
+import ProfileScreen from '../Shared/User/UserProfileScreen.tsx';
+import ManageVendorsScreen from '../Shared/ManageVendorsScreen.tsx';
+import { useVendor } from '../context/VendorContext.tsx';
 
 const Tab = createBottomTabNavigator();
 const colors = theme.colors.light;
@@ -35,30 +33,26 @@ function useOrientation() {
 
 export default function BottomTabNav() {
 	const isLandscape = useOrientation();
-	const insets = useSafeAreaInsets();
 	const { hasRole, hasAnyRole } = useAccess();
+	const { vendorScope, setVendorScope } = useVendor();
 
-	const TAB_HEIGHT = isLandscape ? 52 : 64;
+	const TAB_HEIGHT = isLandscape ? 52 : 70;
 
 	const getIcon = (route: string, focused: boolean) => {
 		switch (route) {
 			case 'Home':
 				return focused ? 'home' : 'home-outline';
-			case 'Record':
-				return focused
-					? 'document-text'
-					: 'document-text-outline';
-			case 'Scan':
-				return focused ? 'qr-code' : 'qr-code-outline';
-			case 'Add':
-				return focused ? 'add-circle' : 'add-circle-outline';
+			case 'Products':
+				return focused ? 'cube' : 'cube-outline';
 			case 'Me':
 				return focused ? 'person' : 'person-outline';
-			case 'Shop':
-				return focused ? 'cart' : 'cart-outline';
+				case 'Profile':
+				return focused ? 'person' : 'person-outline';
+			case 'Store':
+				return focused ? 'storefront' : 'storefront-outline';
+			case 'POS':
+				return focused ? 'barcode' : 'barcode-outline';
 
-			case 'Chat':
-				return focused ? 'chatbubble-ellipses' : 'chatbubble-ellipses-outline';
 			default:
 				return 'ellipse-outline';
 		}
@@ -69,20 +63,19 @@ export default function BottomTabNav() {
 			initialRouteName="Home"
 			screenOptions={({ route }) => ({
 				headerShown: false,
+
 				tabBarIcon: ({ focused }) => (
-					<View>
-						<Icon
-							name={getIcon(route.name, focused)}
-							size={22}
-							color={focused ? colors.primary : '#A0A0A0'}
-						/>
-					</View>
+					<Icon
+						name={getIcon(route.name, focused)}
+						size={22}
+						color={focused ? colors.primary : '#A0A0A0'}
+					/>
 				),
+
 				tabBarLabel: ({ focused }) => (
 					<CText
 						style={{
 							fontSize: 10,
-							fontWeight: '400',
 							marginTop: 2,
 							color: focused ? colors.primary : '#A0A0A0',
 						}}
@@ -90,19 +83,24 @@ export default function BottomTabNav() {
 						{route.name}
 					</CText>
 				),
+
 				tabBarStyle: {
-					height: TAB_HEIGHT + insets.bottom,
-					paddingBottom: Math.max(insets.bottom, 8),
-					paddingTop: 8,
+					height: TAB_HEIGHT,
+					paddingTop: 6,
+					paddingBottom: 6,
 					backgroundColor: colors.card,
 					borderTopWidth: 0.5,
 					borderTopColor: '#E5E5E5',
-					elevation: 4,
+					elevation: 6,
 				},
 			})}
 		>
-			<Tab.Screen name="Shop" component={HomeScreen} />
-			<Tab.Screen name="Me" component={HomeScreen} />
+			<Tab.Screen name="Home" component={HomeScreen} />
+			<Tab.Screen name="Products" component={ProductListScreen} />
+			{vendorScope !== null && vendorScope !== 'ALL' && (
+				<Tab.Screen name="POS" component={ManageVendorsScreen} />
+			)}
+			<Tab.Screen name="Store" component={ManageVendorsScreen} />
 		</Tab.Navigator>
 	);
 }

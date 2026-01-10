@@ -1,20 +1,30 @@
-import React from "react";
+import React, { useEffect, useRef } from 'react';
 import {
     Modal,
     View,
     StyleSheet,
     TouchableWithoutFeedback,
     Platform,
-    StatusBar,
-} from "react-native";
+    StatusBar, Dimensions, Animated,
+} from 'react-native';
 import { CText } from "../common/CText";
-
+const { height } = Dimensions.get("window");
+const SHEET_HEIGHT = height * 0.8;
 export default function IosBottomSheet({
                                            visible,
                                            title,
                                            onClose,
                                            children,
                                        }) {
+    const translateY = useRef(new Animated.Value(-SHEET_HEIGHT)).current;
+
+    useEffect(() => {
+        Animated.timing(translateY, {
+            toValue: visible ? 0 : -SHEET_HEIGHT,
+            duration: visible ? 280 : 220,
+            useNativeDriver: true,
+        }).start();
+    }, [visible]);
     return (
         <Modal
             visible={visible}
@@ -31,7 +41,15 @@ export default function IosBottomSheet({
             <TouchableWithoutFeedback onPress={onClose}>
                 <View style={styles.overlay}>
                     <TouchableWithoutFeedback>
-                        <View style={styles.sheet}>
+                        <Animated.View
+                            style={[
+                                styles.sheet,
+                                {
+                                    height: SHEET_HEIGHT,
+                                    transform: [{ translateY }],
+                                },
+                            ]}
+                        >
                             <View style={styles.handle} />
 
                             {title && (
@@ -41,7 +59,7 @@ export default function IosBottomSheet({
                             )}
 
                             {children}
-                        </View>
+                        </Animated.View>
                     </TouchableWithoutFeedback>
                 </View>
             </TouchableWithoutFeedback>

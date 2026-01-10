@@ -1,7 +1,7 @@
 import React from "react";
 import { TouchableOpacity, Text, StyleSheet, View, ViewStyle } from "react-native";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { PrimaryColor } from "../context/ThemeContext.tsx";
+import Icon from 'react-native-vector-icons/Ionicons';
+import { theme } from '../../theme';
 
 interface ButtonProps {
     title: string;
@@ -14,7 +14,7 @@ interface ButtonProps {
 const CButton2: React.FC<ButtonProps> = ({ title, type, icon, onPress, style }) => {
     const buttonColors = {
         danger: '211, 47, 47',
-        success: `${PrimaryColor}`,
+        success: theme.colors.light.primary,
         warning: '245, 124, 0',
         info: '25, 118, 210',
         secondary: '255,255,255',
