@@ -32,11 +32,12 @@ import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
 import {FiscalYearProvider} from "./src/context/FiscalYearContext.tsx";
 import {useAccess} from "./src/hooks/useAccess.ts";
-import ProductSearchScreen from './src/screens/Pos/ProductSearchScreen.tsx';
+import ProductSearchScreen from './src/screens/product/ProductSearchScreen.tsx';
 import PriceInquiryScreen from './src/screens/Pos/PriceInquiryScreen.tsx';
 import PosScreen from './src/screens/Pos/PosScreen.tsx';
 import ProfileScreen from './src/Shared/User/UserProfileScreen.tsx';
 import { VendorProvider } from './src/context/VendorContext.tsx';
+import NewProduct from './src/screens/product/NewProduct.tsx';
 const Stack = createNativeStackNavigator();
 LogBox.ignoreLogs(['Text strings must be rendered within a <Text> component']);
 
@@ -155,6 +156,7 @@ const AppNavigator = () => {
                                     />
                                     <Stack.Screen name={"Profile"} component={ProfileScreen} />
                                     <Stack.Screen name={"AcademicYear"} component={FiscalYearProvider} />
+                                    <Stack.Screen name={'NewProduct'} component={NewProduct} />
                                 </Stack.Navigator>
 
                             </NavigationContainer>

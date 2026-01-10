@@ -7,10 +7,10 @@ import { theme } from '../theme';
 import { CText } from '../components/common/CText';
 
 import HomeScreen from '../Shared/HomeScreen';
-import ProductListScreen from '../screens/Pos/ProductListScreen.tsx';
+import ProductListScreen from '../screens/product/ProductListScreen.tsx';
 import { useAccess } from '../hooks/useAccess.ts';
 import ProfileScreen from '../Shared/User/UserProfileScreen.tsx';
-import ManageVendorsScreen from '../Shared/ManageVendorsScreen.tsx';
+import ManageVendorsScreen from '../screens/Vendor/ManageVendorsScreen.tsx';
 import { useVendor } from '../context/VendorContext.tsx';
 
 const Tab = createBottomTabNavigator();
