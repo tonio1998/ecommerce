@@ -1,8 +1,8 @@
 import React from 'react';
 import { FlatList, SafeAreaView, TouchableOpacity } from 'react-native';
-import { CText } from '../../components/common/CText';
-import { globalStyles } from '../../theme/styles';
-import { formatNumber } from '../../utils/format';
+import { CText } from '../../components/common/CText.tsx';
+import { globalStyles } from '../../theme/styles.ts';
+import { formatNumber } from '../../utils/format.ts';
 
 const PRODUCTS = [
 	{ id: 'p1', name: 'Coca-Cola 1.5L', price: 75 },

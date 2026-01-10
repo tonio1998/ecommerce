@@ -9,22 +9,22 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-import CustomHomeHeader from '../../components/layout/CustomHomeHeader';
-import { globalStyles } from '../../theme/styles';
-import { CText } from '../../components/common/CText';
-import { formatNumber } from '../../utils/format';
+import CustomHomeHeader from '../../components/layout/CustomHomeHeader.tsx';
+import { globalStyles } from '../../theme/styles.ts';
+import { CText } from '../../components/common/CText.tsx';
+import { formatNumber } from '../../utils/format.ts';
 import { theme } from '../../theme';
-import { handleApiError } from '../../utils/errorHandler';
-import { useVendor } from '../../context/VendorContext';
+import { handleApiError } from '../../utils/errorHandler.ts';
+import { useVendor } from '../../context/VendorContext.tsx';
 
 import {
 	fetchProductsPage,
 	syncProductsApi,
-} from '../../api/modules/productsApi';
+} from '../../api/modules/productsApi.ts';
 import {
 	getProductsFromCache,
 	saveProductsToCache,
-} from '../../services/cache/productCache';
+} from '../../services/cache/productCache.ts';
 import CButton2 from '../../components/buttons/CButton2.tsx';
 
 const PAGE_SIZE = 50;
@@ -231,7 +231,7 @@ const ProductListScreen = ({ navigation }) => {
 					onRefresh={fetchInitialFromServer}
 				/>
 
-				<TouchableOpacity style={globalStyles.fab} activeOpacity={0.85} onPress={() => navigation.navigate('POS')}>
+				<TouchableOpacity style={globalStyles.fab} activeOpacity={0.85} onPress={() => navigation.navigate('NewProduct')}>
 					<Icon name="add" size={22} color="#fff" />
 				</TouchableOpacity>
 
