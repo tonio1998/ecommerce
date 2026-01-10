@@ -17,7 +17,6 @@ import BackHeader from "../../components/layout/BackHeader";
 
 import { useAccess } from "../../hooks/useAccess";
 import { useAuth } from "../../context/AuthContext";
-import { useFiscalYear } from "../../context/FiscalYearContext";
 
 import { getUserDetails } from "../../api/modules/userApi";
 import { handleApiError } from "../../utils/errorHandler";
@@ -29,7 +28,6 @@ import {loadUserFromCache, saveUserToCache} from "../../services/cache/userCache
 export default function UsersDetails({ route }) {
     const { user } = useAuth();
     const { hasRole } = useAccess();
-    const { fiscalYear } = useFiscalYear();
 
     const userDetails = route.params?.item;
 

@@ -7,7 +7,6 @@ import {
 	Switch,
 	TouchableOpacity,
 	ScrollView,
-	SafeAreaView,
 	RefreshControl,
 	ToastAndroid, Button, StatusBar,
 } from 'react-native';
@@ -29,12 +28,12 @@ import BackHeader from '../../components/layout/BackHeader.tsx';
 import { NetworkContext } from '../../context/NetworkContext.tsx';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
-import { getAcademicInfo } from '../../utils/getAcademicInfo.ts';
 import {useFocusEffect, useTheme} from '@react-navigation/native';
 import ActivityIndicator2 from "../../components/loaders/ActivityIndicator2.tsx";
 import CButton from "../../components/buttons/CButton.tsx";
 import HeaderBackground from "../../components/halfBg.tsx";
 import {useFiscalYear} from "../../context/FiscalYearContext.tsx";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ProfileScreen({ navigation }) {
 	const { mode, toggleTheme, colors } = useTheme();
@@ -96,16 +95,6 @@ export default function ProfileScreen({ navigation }) {
 		await loadFromCache();
 		// setLoading(false);
 	};
-
-	useFocusEffect(
-		useCallback(() => {
-			(async () => {
-				await initFetch();
-				const acadInfo = await getAcademicInfo();
-				setAcad(acadInfo);
-			})();
-		}, [])
-	);
 
 	const onRefresh = useCallback(async () => {
 		setLoading(true);

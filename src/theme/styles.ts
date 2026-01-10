@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { theme } from './index';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 let ElementRadius = theme.radius.sm;
 let WhiteColor = '#fff';
@@ -340,12 +341,6 @@ export const globalStyles = StyleSheet.create({
 
     safeArea: {
         flex: 1,
-        // paddingBottom: 50,
-        // paddingHorizontal: 15,
-        // position: 'relative',
-        // marginTop: 90,
-        // backgroundColor: theme.colors.light.background,
-        paddingTop: 90,
     },
     picker: {
         height: 50,

@@ -24,7 +24,6 @@ import CustomHomeHeader from "../../components/layout/CustomHomeHeader.tsx";
 import { theme } from "../../theme";
 import { CText } from "../../components/common/CText.tsx";
 import { formatDate } from "../../utils/dateFormatter";
-import { useFiscalYear } from "../../context/FiscalYearContext.tsx";
 import UnauthorizedView from "../../components/UnauthorizedView.tsx";
 import { useAccess } from "../../hooks/useAccess.ts";
 import { useAuth } from "../../context/AuthContext.tsx";
@@ -40,7 +39,6 @@ import {FILE_BASE_URL} from "../../../env.ts";
 const PAGE_SIZE = 50;
 
 export default function UsersScreen({ navigation }) {
-    const { fiscalYear } = useFiscalYear();
     const { user } = useAuth();
     const { hasRole } = useAccess();
 
@@ -64,8 +62,7 @@ export default function UsersScreen({ navigation }) {
             try {
                 if (!force) {
                     const { data, date } = await loadUsersFromCache(
-                        user.id,
-                        fiscalYear
+                        user.id
                     );
                     if (Array.isArray(data)) {
                         setUsers(data);
@@ -80,7 +77,6 @@ export default function UsersScreen({ navigation }) {
 
                 const savedAt = await saveUsersToCache(
                     user.id,
-                    fiscalYear,
                     normalized
                 );
                 setLastUpdated(savedAt);
@@ -92,7 +88,7 @@ export default function UsersScreen({ navigation }) {
                 setRefreshing(false);
             }
         },
-        [user?.id, fiscalYear]
+        [user?.id]
     );
 
     useEffect(() => {

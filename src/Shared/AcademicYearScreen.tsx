@@ -3,7 +3,6 @@ import {
 	View,
 	TouchableOpacity,
 	StyleSheet,
-	SafeAreaView,
 	StatusBar,
 	Text,
 } from 'react-native';
@@ -13,6 +12,7 @@ import { theme } from '../theme';
 import CanvaHeaderBackground from '../components/CanvaBackground.tsx';
 import { useFiscalYear } from '../context/FiscalYearContext.tsx';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function FiscalYearScreen({ navigation }) {
 	const { fiscalYear, setFiscalYear } = useFiscalYear();
